@@ -71,13 +71,13 @@ state-of-the-art relation prediction 방법은 knowledge embedding based model�
 Graph Convolutional networks(GCNs) 는 entity의 이웃노드에게서 정보를 수집하는데 이 때 부여하는 가중치가 모두 동일합니다. 이러한 단점을 해결하기 위해 나온 Graph attention networks(GATs)는 노드의 이웃 노드에게 서로 다른 중요도를 부여합니다. 즉, 각각의 중요도를 계산한 후 가중치를 다르게 부여하는 것입니다. 
 
 먼저, 한 레이어의 노드의 input feature set은  $x= \{\vec{x_1}, \vec{x_2}, \vec{x_3}, ..., \vec{x_N}\}$ 이고 layer를 지나고 나면 $x'= \{\vec{x_1'}, \vec{x_2'}, \vec{x_3'}, ..., \vec{x_N'}\}$ 을 output으로 만듭니다. 이 때 $x$ 와 $x'$ 는 모두 entity $e_i$의 embedding이고 N은 노드 개수입니다. 따라서 하나의 GAT 레이어는 아래의 식으로 설명될 수 있습니다. 
-dd
+
 $${e_{ij}}= a( W \vec{x_i},W \vec{x_j})$$
 
 이때 $(e_{ij})$는 edge $(e_i,e_j)$의 attention value를 의미합니다. Attention value는 각 edge의 feature들이 시작 노드인 $e_i$에 대한 중요도입니다. $W$는 input feature를 더 큰 차원을 가진 output feature공간으로 매핑하기 위한 선형변환이고 $a$는 attention function으로 직접 정하는 함수입니다. 여기서 relative attention $\alpha_{ij}$ 는 이웃에 있는 모든 value에 대해 softmax function을 이용하여 계산한 값입니다. 아래는 output embedding을 구하는 과정입니다.
 
 
-$${\vec{x_i'}} = {\sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})}$$
+$${\vec{x_i'}} = {\sigma(\sum\limits_{j\in\mathbb{N_i}}} {\alpha_{ij}W\vec{x_j})}$$
 
 그런데, GAT는 learning precoess를 안정화시키기 위해 multi-head attention을 사용합니다. (자세한 내용은 [여기](https://arxiv.org/abs/1706.03762)를 클릭하세요) multi-head attention process는 $K$개의 attention head를 합치는 것으로 이루어지는데 구체적인 식은 아래와 같습니다. 이 때, $||$ 는 합치는 과정을 의미하고 $\sigma$는 비선형 함수를 의미하고 $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수를 의미하는데 이는 k-th attention mechanism으로 계산됩니다. 그리고 $W^k$는 k-th attention mechanism의 선형 변환 행렬을 의미합니다. 
 $${\vec{x_i'}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$
