@@ -132,7 +132,7 @@ Translational scoring function(소개된 논문은 [여기](https://papers.nips.
 
 Ex) $e_j$가 $e_i$의 relation $r_k$로 연결된 가장 가까운 이웃
 
-구체적으로, L1-norm dissimilarity를 줄이기 위해 entity와 relation embeddings를 학습하는 것입니다. L1-norm dissimilarity를 check$$ d_{t_{ij}} = \Vert\vec{h_i} + \vec{g_k} - \vec{h_j}\Vert$$ $$d_{t_{ij}} = ||\vec{h_i} + \vec{g_k} - \vec{h_j}||$$ 로 측정할 수 있습니다.
+구체적으로, L1-norm dissimilarity를 줄이기 위해 entity와 relation embeddings를 학습하는 것입니다. L1-norm dissimilarity를 $$ d_{t_{ij}} = \Vert\vec{h_i} + \vec{g_k} - \vec{h_j}\Vert$$ 로 측정할 수 있습니다.
 
 모델을 학습시킬 때에 hinge-loss를 사용하였는데 이는 아래의 수식입니다.
 $$
