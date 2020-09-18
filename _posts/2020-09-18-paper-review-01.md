@@ -80,12 +80,12 @@ $$
 $$
 그런데, GAT는 learning precoess를 안정화시키기 위해 multi-head attention을 사용합니다. (자세한 내용은 [여기](https://arxiv.org/abs/1706.03762)를 클릭하세요) multi-head attention process는 $K$개의 attention head를 합치는 것으로 이루어지는데 구체적인 식은 아래와 같습니다. 이 때, $||$ 는 합치는 과정을 의미하고 $\sigma$는 비선형 함수를 의미하고 $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수를 의미하는데 이는 k-th attention mechanism으로 계산됩니다. 그리고 $W^k$는 k-th attention mechanism의 선형 변환 행렬을 의미합니다. 
 $$
-\vec{(x_i')} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})
+{\vec{(x_i')}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})
 $$
 마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다. 
 $$
-\vec{(x_i')} = \sigma(1/K\sum_{k=1}^K
-\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})
+{\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
+{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j})
 $$
 
 
@@ -119,7 +119,7 @@ GAT는 성공적이었지만 KG의 중요한 파트인 relation feature에 대�
 
 entity $e_i$의 새로운 embedding을 얻으려면 $e_i$가 속한 triple가 학습됩니다. 이러한 embedding을 아래 식에서 볼 수 있듯이 entity의 concatenation과 특정 triple $t_{ij}^k=(e_i,r_k,e_j)$ 의 relation feature vector 사이의 선형변환을 수행하는 것으로 학습합니다. 
 $$
-\vec{c_{ijk}} = W_1[\vec{h_i} || \vec{h_j} ||\vec{g_k}]
+{\vec{c_{ijk}}} = W_1[\vec{h_i} || \vec{h_j} ||\vec{g_k}]
 $$
 위의 식에서 $\vec{c_{ijk}}$ 은 triple  $t_{ij}^k$의 벡터형이고 $\vec{h_i}$ , $\vec{h_j}$ ,  $\vec{g_k}$ 은 각각 entity $e_i$, $e_j$와 relation 의 embedding입니다. 그리고 $W_1$은 선형변환 행렬입니다. 
 
