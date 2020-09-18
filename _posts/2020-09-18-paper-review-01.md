@@ -85,10 +85,8 @@ $$\vec{x_i'} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})$$
 $${\vec{(x_i')}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$
 
 마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다. 
-$${
-{\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
-{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j}) \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})}}
-$$
+$${{\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
+{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j}) \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})}}$$
 
 
 
@@ -96,18 +94,12 @@ $$
 위 식에서 $N_i$는 entity $e_i$의 이웃이고 $R_{ij}$는 $e_i$와 $e_j$를 연결하는 relation의 집합입니다. 
 
 Entity  $e_i$의 새로운 embedding은  attention value에 의해 가중치가 표현된 각 triple의 sum이고 아래와 같이 구할 수 있습니다.
-$$
-\vec{h_i'} = \sigma(\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}\vec{c_{ijk}})
-$$
+$$\vec{h_i'} = \sigma(\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}\vec{c_{ijk}})$$
 본 모델도 GAT에서 언급했던 학습 과정을 안정화시키고 더 많은 이웃에 대한 정보를 포함하기 위해서 사용되는 multi-head attention으로 구현합니다. 본질적으로 $M$개의 서로 독립적인 attention mechanism이 embedding을 계산하고 합쳐질 때 아래와 같은 식으로 연산됩니다. 이 과정이 그림 4에서 graph attention layer라고 표시된 부분입니다. 			
-$$
-\vec{h_i'} =\mathbin\Vert_{m=1}^M \sigma(\sum\limits_{j\in N_i}\alpha_{ijk}^m\vec{c_{ijk}^m})
-$$
+$${\vec{h_i'} =\mathbin\Vert_{m=1}^M \sigma(\sum\limits_{j\in N_i}\alpha_{ijk}^m\vec{c_{ijk}^m})}$$
 
 그리고 relation embedding 행렬인 G에 대해서도 선형변환을 가중치있는 행렬 $W^R$을 통해 진행하면 아래의 식과 같이 output relation embedding을 구할 수 있습니다. 이 때 $W^R \in R^{T \times T'}$ 이고 이때의 $T'$은 output relation embedding의 차원입니다. 
-$$
-G'=G.W^R
-$$
+$$G'=G.W^R$$
 GAT와 유사하게 본 모델에서도 마지막 layer에서는 concatenation 대신에 평균치를 사용합니다. 그래서 마지막 layer를 구할 때 사용되는 식은 아래와 같습니다. 
 $$
 \vec{h_i'} = \sigma(\frac{1}{M}\sum_{m=1}^M\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}^m\vec{c_{ijk}^m})
