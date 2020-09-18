@@ -79,14 +79,12 @@ $${\vec{x_i'}} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})$$
 $${\vec{x_i'}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$  
 $\sigma$: 비선형 함수, $\alpha_{ij}^k$: 정규화된 edge $(e_i,e_j)$의 계수를 의미(k-th attention mechanism으로 계산), $W^k$: k-th attention mechanism의 선형 변환 행렬
 
+마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다.   
 
-마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다.  
-$$ {\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
-{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j}) \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})} $$  
+$$\vec{(x_i')} = \sigma(1/K\sum_{k=1}^K
+\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$   
 
-$N_i$: entity $e_i$의 이웃, $R_{ij}$: $e_i$와 $e_j$를 연결하는 relation의 집합 
-
-GAT는 성공적이었지만 KG의 중요한 파트인 relation feature에 대해서는 고려하지 않았기 때문에 KGs에는 적합하지 않았습니다. KG에서는 entity가 어떤 relation과 관계되어지는지에 따라서 다른 역할이 부여되기 때문입니다.  Ex) Christopher Nolan은 두개의 서로 다른 triple에 나타나는데 하나의 역할은 brother이고 하나의 역할은 director
+GAT는 성공적이었지만 KG의 중요한 파트인 relation feature에 대해서는 고려하지 않았기 때문에 KGs에는 적합하지 않았습니다. KG에서는 entity가 어떤 relation과 관계되어지는지에 따라서 다른 역할이 부여되기 때문입니다.  Ex) 위의 첫번째 그림에서 Christopher Nolan은 두개의 서로 다른 triple에 나타나는데 하나의 역할은 brother이고 하나의 역할은 director
 
 
 
@@ -121,14 +119,14 @@ $$ \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_
 
 Entity  $e_i$의 새로운 embedding은  attention value에 의해 가중치가 표현된 각 triple의 sum이고 아래와 같이 구할 수 있습니다.  
 $${\vec{h_i'}} = \sigma(\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}\vec{c_{ijk}})$$    
-본 모델도 GAT에서 언급했던 학습 과정을 안정화시키고 더 많은 이웃에 대한 정보를 포함하기 위해서 사용되는 multi-head attention으로 구현합니다. 본질적으로 $M$개의 서로 독립적인 attention mechanism이 embedding을 계산하고 합쳐질 때 아래와 같은 식으로 연산됩니다. 이 과정이 그림 4에서 graph attention layer라고 표시된 부분입니다. 			
+본 모델도 GAT에서 언급했던 학습 과정을 안정화시키고 더 많은 이웃에 대한 정보를 포함하기 위해서 사용되는 multi-head attention으로 구현합니다. 본질적으로 $M$개의 서로 독립적인 attention mechanism이 embedding을 계산하고 합쳐질 때 아래와 같은 식으로 연산됩니다. 아래의 본 모델을 정리한 그림에서 에서 graph attention layer라고 표시된 부분입니다. 			
 $$\\{\vec{h_i'} =\mathbin\Vert_{m=1}^M \sigma(\sum\limits_{j\in N_i}\alpha_{ijk}^m\vec{c_{ijk}^m})}$$
 
 그리고 relation embedding 행렬인 G에 대해서도 선형변환을 가중치있는 행렬 $W^R$을 통해 진행하면 아래의 식과 같이 output relation embedding을 구할 수 있습니다. 이 때 $W^R \in R^{T \times T'}$ 이고 이때의 $T'$은 output relation embedding의 차원입니다. 
 $$\\{G'}=G.W^R$$
 
 GAT와 유사하게 본 모델에서도 마지막 layer에서는 concatenation 대신에 평균치를 사용합니다. 그래서 마지막 layer를 구할 때 사용되는 식은 아래와 같습니다.  
-$${\vec{h_i'}} = \sigma(\frac{1}{M}\sum_{m=1}^M\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}^m\vec{c_{ijk}^m})$$  
+$$\vec{h_i'} = \sigma(\frac{1}{M}\sum\limits_{m=1}^M\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}^m\vec{c_{ijk}^m})$$  
 그러나 새로운 embedding을 학습하면서 entity는 그들의 최초의 embedding 정보를 잃게됩니다. 그래서 이를 해결하기 위해, 해당 모델에서는 input entity embedding인 $H^i$를 가중치 행렬 $W^E \in R^{T^i \times T^f}$을 사용해서 선형적으로 변환하여 $H^t$를 얻습니다. 이 때, $T^i$ 는 최초의 entity embedding의 차원이고 $T^f$는 마지막 entity embedding의 차원입니다. 아래의 식과 같이 이 최초 embedding 정보를 마지막 attentional 레이어에서 얻은 entity embedding에 더합니다.  이 때, $H^f \in R^{N_e \times T^f}$입니다.  
 $${H''}=W^EH^t + H^f$$  
 본 모델의 설계에서는 edge의 개념을 n-hop 이웃에 대해 두개의 entity 사이의 보조 relation을 활용하여 directed path로 확장하였습니다. 이는 모든 경로에 있는 relation의 embedding에 대한 합이라고 볼 수 있습니다. 본 모델은 반복적으로 멀리 있는 이웃의 정보까지 모두 축적합니다. 
@@ -140,6 +138,8 @@ $${H''}=W^EH^t + H^f$$
 요약하여 하나의 그림으로 나타낸다면 아래의 그림입니다. 
 
 ![Image_4](https://user-images.githubusercontent.com/22410209/93555905-5859da80-f9b2-11ea-94d9-5f81e827b46e.JPG)
+
+
 
 ### 어떻게 학습시킬 것인가
 
