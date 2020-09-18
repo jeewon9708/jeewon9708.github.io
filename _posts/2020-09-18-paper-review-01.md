@@ -72,20 +72,20 @@ Graph Convolutional networks(GCNs) 는 entity의 이웃노드에게서 정보를
 
 먼저, 한 레이어의 노드의 input feature set은  $x= \{\vec{x_1}, \vec{x_2}, \vec{x_3}, ..., \vec{x_N}\}$ 이고 layer를 지나고 나면 $x'= \{\vec{x_1'}, \vec{x_2'}, \vec{x_3'}, ..., \vec{x_N'}\}$ 을 output으로 만듭니다. 이 때 $x$ 와 $x'$ 는 모두 entity $e_i$의 embedding이고 N은 노드 개수입니다. 따라서 하나의 GAT 레이어는 아래의 식으로 설명될 수 있습니다. 
 
-$$e_{ij}= a( W \vec{x_i},W \vec{x_j})$$
+$$ e_{ij}= a( W \vec{x_i},W \vec{x_j}) $$
 
 이때 $(e_{ij})$는 edge $(e_i,e_j)$의 attention value를 의미합니다. Attention value는 각 edge의 feature들이 시작 노드인 $e_i$에 대한 중요도입니다. $W$는 input feature를 더 큰 차원을 가진 output feature공간으로 매핑하기 위한 선형변환이고 $a$는 attention function으로 직접 정하는 함수입니다. 여기서 relative attention $\alpha_{ij}$ 는 이웃에 있는 모든 value에 대해 softmax function을 이용하여 계산한 값입니다. 아래는 output embedding을 구하는 과정입니다.
 
 
-$${\vec{x_i'} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})}$$
+$${\vec{x_i'}} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})$$
 
 그런데, GAT는 learning precoess를 안정화시키기 위해 multi-head attention을 사용합니다. (자세한 내용은 [여기](https://arxiv.org/abs/1706.03762)를 클릭하세요) multi-head attention process는 $K$개의 attention head를 합치는 것으로 이루어지는데 구체적인 식은 아래와 같습니다. 이 때, $||$ 는 합치는 과정을 의미하고 $\sigma$는 비선형 함수를 의미하고 $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수를 의미하는데 이는 k-th attention mechanism으로 계산됩니다. 그리고 $W^k$는 k-th attention mechanism의 선형 변환 행렬을 의미합니다. 
 $${\vec{x_i'}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$
 
 마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다. 
 
-$$ \\{\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
-{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j}) \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})} \\$$
+$$ {\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
+{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j}) \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})} $$
 
 
 위 식에서 $N_i$는 entity $e_i$의 이웃이고 $R_{ij}$는 $e_i$와 $e_j$를 연결하는 relation의 집합입니다. 
@@ -98,13 +98,14 @@ $${\vec{h_i'}} = \sigma(\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{i
 $$\\{\vec{h_i'} =\mathbin\Vert_{m=1}^M \sigma(\sum\limits_{j\in N_i}\alpha_{ijk}^m\vec{c_{ijk}^m})}$$
 
 그리고 relation embedding 행렬인 G에 대해서도 선형변환을 가중치있는 행렬 $W^R$을 통해 진행하면 아래의 식과 같이 output relation embedding을 구할 수 있습니다. 이 때 $W^R \in R^{T \times T'}$ 이고 이때의 $T'$은 output relation embedding의 차원입니다. 
-$$\\{G'}=G.W^R\\$$
+$$\\{G'}=G.W^R$$
+
 GAT와 유사하게 본 모델에서도 마지막 layer에서는 concatenation 대신에 평균치를 사용합니다. 그래서 마지막 layer를 구할 때 사용되는 식은 아래와 같습니다. 
 
-$$\\{\vec{h_i'}} = \sigma(\frac{1}{M}\sum_{m=1}^M\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}^m\vec{c_{ijk}^m})\\$$
+$${\vec{h_i'}} = \sigma(\frac{1}{M}\sum_{m=1}^M\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}^m\vec{c_{ijk}^m})$$
 
 그러나 새로운 embedding을 학습하면서 entity는 그들의 최초의 embedding 정보를 잃게됩니다. 그래서 이를 해결하기 위해, 해당 모델에서는 input entity embedding인 $H^i$를 가중치 행렬 $W^E \in R^{T^i \times T^f}$을 사용해서 선형적으로 변환하여 $H^t$를 얻습니다. 이 때, $T^i$ 는 최초의 entity embedding의 차원이고 $T^f$는 마지막 entity embedding의 차원입니다. 아래의 식과 같이 이 최초 embedding 정보를 마지막 attentional 레이어에서 얻은 entity embedding에 더합니다.  이 때, $H^f \in R^{N_e \times T^f}$입니다. 
-$$\\{H''}=W^EH^t + H^f\\$$
+$$\\{H''}=W^EH^t + H^f$$
 본 모델의 설계에서는 edge의 개념을 n-hop 이웃에 대해 두개의 entity 사이의 보조 relation을 활용하여 directed path로 확장하였습니다. 이는 모든 경로에 있는 relation의 embedding에 대한 합이라고 볼 수 있습니다. 본 모델은 반복적으로 멀리 있는 이웃의 정보까지 모두 축적합니다. 
 
 ### ![Image_2](https://user-images.githubusercontent.com/22410209/93541748-3d776e00-f992-11ea-9bc6-8f4b1034867a.JPG)
@@ -117,13 +118,12 @@ $$\\{H''}=W^EH^t + H^f\\$$
 
 ##### Train objective
 
-Translational scoring function(소개된 논문은 [여기](https://papers.nips.cc/paper/5071-translating-embeddings-for-modeling-multi-relational-data)를 참고하세요)을 사용하는데 이는 다음을 만족하는 embedding으로부터 학습합니다. 주어진 valid triple 에 대해서 $t_{ij}^k = (e_i, r_k, e_j)$에 대하여 조건 $\vec{h_i} + \vec{g_k} \approx \vec{h_j}$가 만족해야합니다. 
-
-Ex) $e_j$가 $e_i$의 relation $r_k$로 연결된 가장 가까운 이웃
+Translational scoring function(소개된 논문은 [여기](https://papers.nips.cc/paper/5071-translating-embeddings-for-modeling-multi-relational-data)를 참고하세요)을 사용하는데 이는 다음을 만족하는 embedding으로부터 학습합니다. 주어진 valid triple 에 대해서 $t_{ij}^k = (e_i, r_k, e_j)$에 대하여 조건 $\vec{h_i} + \vec{g_k} \approx \vec{h_j}$가 만족해야합니다. Ex) $e_j$가 $e_i$의 relation $r_k$로 연결된 가장 가까운 이웃
 
 구체적으로, L1-norm dissimilarity를 줄이기 위해 entity와 relation embeddings를 학습하는 것입니다. L1-norm dissimilarity를 $$ d_{t_{ij}} = \Vert\vec{h_i} + \vec{g_k} - \vec{h_j}\Vert$$ 로 측정할 수 있습니다.
 
 모델을 학습시킬 때에 hinge-loss를 사용하였는데 이는 아래의 수식입니다.
+
 $${L(\Omega)} = \sum\limits_{t_{ij} \in S}\sum\limits_{t_{ij}'\in S} max\{d_{t_{ij}'}-d_{t_{ij}} + \gamma,0\} \\$$
 위의 식에서 $\gamma >0 $는 hyper-parameter이고 $S$는 valid triple의 집합, $S'$은 invalid한 triple의 집합입니다.
 
