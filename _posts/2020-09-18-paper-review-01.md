@@ -13,6 +13,22 @@ Deepak Nathani∗ Jatin Chauhan∗ Charu Sharma∗ Manohar Kaul Department of Co
 해당 블로그 포스트는 ACL 2019 에 게재된 [Learning Attention-based Embeddings for Relation Prediction in Knowledge Graphs](https://www.aclweb.org/anthology/P19-1466/) 논문 정리 및 분석하기 위해 작성되었습니다.
 
 ### Knowledge graphs(KGs)와 relaton prediction이란?
+$$
+\begin{align*}
+  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
+  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
+  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
+      \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
+      \vdots & \ddots & \vdots \\
+      \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
+    \end{array} \right)
+  \left( \begin{array}{c}
+      y_1 \\
+      \vdots \\
+      y_n
+    \end{array} \right)
+\end{align*}
+$$
 
 Knowledge graphs(KGs)는 Knowledge bases(KBs)를 directed graph로 표현한 것을 의미합니다. 이 때 KBs는 AI가 사용될 분야에 대해 축적한 전문 지식 그리고 문제 해결에 필요한 사실과 규칙 등이 저장되어 있는 데이터베이스입니다. 즉, KGs는 아래의 그림과 같이 KBs의 entity를 node로, relation을 edge로 표현한 자료구조입니다. 
 
