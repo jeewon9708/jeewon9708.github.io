@@ -193,7 +193,7 @@ $$
 
 
 $$
-L = \sum\limits_{{t_{ij}^k}\in\{S\cup S'\}}log(1+exp(l_{t_{ij}^k} \cdot f(t_{ij}^k))) + {\lambda \over 2}||W||^2_2
+L = \sum\limits_{t_{ij}^k}\in\{S\cup S'\}}log(1+exp(l_{t_{ij}^k} \cdot f(t_{ij}^k))) + {\lambda \over 2}||W||^2_2
 \\
 where \quad l_{t_{ij}^k} = \left\{ \begin{array}{ll}
          1 & \mbox{if $t_{ij}^k \in S$};\\
