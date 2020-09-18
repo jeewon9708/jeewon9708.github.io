@@ -86,7 +86,44 @@ $$ {\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
 
 $N_i$: entity $e_i$의 이웃, $R_{ij}$: $e_i$와 $e_j$를 연결하는 relation의 집합 
 
+GAT는 성공적이었지만 KG의 중요한 파트인 relation feature에 대해서는 고려하지 않았기 때문에 KGs에는 적합하지 않았습니다. KG에서는 entity가 어떤 relation과 관계되어지는지에 따라서 다른 역할이 부여되기 때문입니다.  Ex) Christopher Nolan은 두개의 서로 다른 triple에 나타나는데 하나의 역할은 brother이고 하나의 역할은 director
+
+
+
+### 본 논문이 제안하는 New model
+
+위와 같은 문제를 해결하고자 본 논문에서는 relation과 neighboring node feature를 모두 고려하는 attention mechanism에서의 embedding 접근을 제안합니다. 먼저 하나의 attentional 레이어를 만들고 모델 구축을 시작합니다. GAT와 유사하게 이 framework는 특정 attention mechanism에 더욱 강력합니다. 
+
+제안하는 모델의 각 layer는 2개의 embedding 행렬을 input으로 가집니다. 
+
+* Entity embeddings $H \in R^{N_e \times T}$ 
+
+  $N_e$ 는 전체 entity 개수, $T$ 는 각 entity embedding의 feature dimension
+
+* relation embeddings $G \in R^{N_r \times P}$  
+
+  $N_r$ 는 전체 relation 개수, $P$ 는 각 relation embedding의 feature dimension
+
+그리고  $H' \in R^{N_e \times T'}$ 와  $G' \in R^{N_r \times P'}$ 을 output으로 내보냅니다. 
+
+entity $e_i$의 새로운 embedding을 얻으려면 $e_i$가 속한 triple가 학습됩니다. 이러한 embedding을 아래 식에서 볼 수 있듯이 entity의 concatenation과 특정 triple $t_{ij}^k=(e_i,r_k,e_j)$ 의 relation feature vector 사이의 선형변환을 수행하는 것으로 학습합니다.   
+
+$$\vec{c_{ijk}} = W_1[\vec{h_i} || \vec{h_j} ||\vec{g_k}]$$ 
+
+위의 식에서 $\vec{c_{ijk}}$ 은 triple  $t_{ij}^k$의 벡터형이고 $\vec{h_i}$ , $\vec{h_j}$ ,  $\vec{g_k}$ 은 각각 entity $e_i$, $e_j$와 relation 의 embedding입니다. 그리고 $W_1$은 선형변환 행렬입니다. 
+
+GAT와 유사하게 각 triple  $t_{ij}^k$의 중요도를  $b_{ijk}$ 라고 할 때 아래와 같이 계산한다. 이 때, 가중치 행렬인 $W_2$ 와 LeakyReLU의 계산으로 triple의 중요도를 계산한다.   
+
+$$b_{ijk} = LeakyReLU(W_2c_{ijk})$$  
+
+아래의 식과 같이 Relative attention value $\alpha_{ijk}$를 얻기 위해 GAT와 유사하게 softmax를  $b_{ijk}$에 적용하여 구합니다.   
+
+$$ \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})}$$  
+
+위 식에서 $N_i$는 entity $e_i$의 이웃이고 $R_{ij}$는 $e_i$와 $e_j$를 연결하는 relation의 집합입니다. 
+
 Entity  $e_i$의 새로운 embedding은  attention value에 의해 가중치가 표현된 각 triple의 sum이고 아래와 같이 구할 수 있습니다.  
+
 $${\vec{h_i'}} = \sigma(\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}\vec{c_{ijk}})$$  
 본 모델도 GAT에서 언급했던 학습 과정을 안정화시키고 더 많은 이웃에 대한 정보를 포함하기 위해서 사용되는 multi-head attention으로 구현합니다. 본질적으로 $M$개의 서로 독립적인 attention mechanism이 embedding을 계산하고 합쳐질 때 아래와 같은 식으로 연산됩니다. 이 과정이 그림 4에서 graph attention layer라고 표시된 부분입니다. 			
 $$\\{\vec{h_i'} =\mathbin\Vert_{m=1}^M \sigma(\sum\limits_{j\in N_i}\alpha_{ijk}^m\vec{c_{ijk}^m})}$$
@@ -104,7 +141,9 @@ $${H''}=W^EH^t + H^f$$
 
 그림 2에서 보면 모델의 첫 레이어에서는 모든 entity가 direct in-flowing neighbors로부터 오는 정보를 받아들입니다. 그리고 두번째 layer에는 U.S가 entity Burack Obama, Ethan Horvath, Chevrolet, Washington D.C에서 정보를 받는데 이미 이러한 entity들은 그들의 이웃인 Michelle Obama, Samuel L.Jackson과 같은 entity의 정보를 갖고 있습니다. 일반적으로 n 레이어 모델의 경우 들어오는 정보는 n-hop 이웃까지 모두 축적됩니다. 이러한 새로운 entity embeddings를 알기 위한 집합 과정과  n-hop 이웃사이의 보조 edge는 그림 2에서 확인할 수 있다. 즉, 매번 주 반복때마다 entity embedding을 매번 일반화된 GAT 레이어를 수행한 후와 first layer 전에 일반화하는 것입니다. 
 
+요약하여 하나의 그림으로 나타낸다면 아래의 그림입니다. 
 
+![Image_4](https://user-images.githubusercontent.com/22410209/93555905-5859da80-f9b2-11ea-94d9-5f81e827b46e.JPG)
 
 ### 어떻게 학습시킬 것인가
 
@@ -126,13 +165,13 @@ $${f(t_{ij}^k)} = (||_{m=1}^\Omega RELU([\vec{h_i},\vec{g_k},\vec{h_j}] * w^m)) 
 위의 식에서 $\Omega$: filter 개수 , $*$: convolution 연산 $W\in R^{\Omega k \times 1}$ : triple의  final score를 계산하기 위한 선형 변환
 
 이 모델은 soft-margin loss를 사용하여 학습되고 아래와 같습니다.  
-$$ 
+$$
 L = \sum\limits_{t_{ij}^k\in\{S\cup S'\}}log(1+exp(l_{t_{ij}^k} \cdot f(t_{ij}^k))) + {\lambda \over 2}||W||^2_2
 \\
 where \quad l_{t_{ij}^k} = \left\{ \begin{array}{ll}
          1 & \mbox{if $t_{ij}^k \in S$};\\
         -1 & \mbox{if $t_{ij}^k \in S'$}.\end{array} \right.
-$$  
+$$
 
 
 ### 실험 및 결과
