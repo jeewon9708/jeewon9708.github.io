@@ -71,6 +71,7 @@ state-of-the-art relation prediction 방법은 knowledge embedding based model�
 Graph Convolutional networks(GCNs) 는 entity의 이웃노드에게서 정보를 수집하는데 이 때 부여하는 가중치가 모두 동일합니다. 이러한 단점을 해결하기 위해 나온 Graph attention networks(GATs)는 노드의 이웃 노드에게 서로 다른 중요도를 부여합니다. 즉, 각각의 중요도를 계산한 후 가중치를 다르게 부여하는 것입니다. 
 
 먼저, 한 레이어의 노드의 input feature set은  $x= \{\vec{x_1}, \vec{x_2}, \vec{x_3}, ..., \vec{x_N}\}$ 이고 layer를 지나고 나면 $x'= \{\vec{x_1'}, \vec{x_2'}, \vec{x_3'}, ..., \vec{x_N'}\}$ 을 output으로 만듭니다. 이 때 $x$ 와 $x'$ 는 모두 entity $e_i$의 embedding이고 N은 노드 개수입니다. 따라서 하나의 GAT 레이어는 아래의 식으로 설명될 수 있습니다.
+$$\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}$$
 
 $$
 {e_{ij}= a( W \vec{x_i},W \vec{x_j})}
