@@ -75,12 +75,11 @@ $${e_{ij}}= a( W \vec{x_i},W \vec{x_j})$$
 아래의 식은 output embedding을 구하는 과정입니다. 아래의 relative attention $\alpha_{ij}$ 는 이웃에 있는 모든 value에 대해 softmax function을 이용하여 계산한 값입니다.    
 $${\vec{x_i'}} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})$$
 
-이 때, GAT는 learning precoess를 안정화시키기 위해 multi-head attention을 사용합니다. (자세한 내용은 [여기](https://arxiv.org/abs/1706.03762)를 클릭하세요) multi-head attention process는 $K$개의 attention head를 합치는 것으로 이루어지는데 구체적인 식은 아래와 같습니다. 이 때, $||$ 는 합치는 과정 (concatenation)을 의미합니다.  $\sigma$는 비선형 함수를 의미하고 $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수를 의미하는데 이는 k-th attention mechanism으로 계산됩니다. 그리고 $W^k$는 k-th attention mechanism의 선형 변환 행렬을 의미합니다. 
+이 때, GAT는 learning precoess를 안정화시키기 위해 multi-head attention을 사용합니다. (자세한 내용은 [여기](https://arxiv.org/abs/1706.03762)를 클릭하세요) multi-head attention process는 $K$개의 attention head를 합치는 것으로 이루어지는데 구체적인 식은 아래와 같습니다. 이 때, $||$ 는 합치는 과정 (concatenation)을 의미합니다.  $\sigma$는 비선형 함수를 의미하고 $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수를 의미하는데 이는 k-th attention mechanism으로 계산됩니다. 그리고 $W^k$는 k-th attention mechanism의 선형 변환 행렬을 의미합니다.   
 $${\vec{x_i'}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$  
 $\sigma$: 비선형 함수, $\alpha_{ij}^k$: 정규화된 edge $(e_i,e_j)$의 계수를 의미(k-th attention mechanism으로 계산), $W^k$: k-th attention mechanism의 선형 변환 행렬
 
 마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다.   
-
 $$\vec{(x_i')} = \sigma(1/K\sum_{k=1}^K
 \sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$   
 
