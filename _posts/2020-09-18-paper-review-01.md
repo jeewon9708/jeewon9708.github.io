@@ -5,7 +5,7 @@ layout: post
 title:  "Learning Attention-based Embeddings for Relation Prediction in Knowledge Graphs"
 date:   2020-09-17T16:25:52-23:00
 author: Jeewon Chae
-categories: paper review
+categories: Paper_review
 
 ---
 
