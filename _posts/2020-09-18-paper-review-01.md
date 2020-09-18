@@ -116,15 +116,12 @@ GAT는 성공적이었지만 KG의 중요한 파트인 relation feature에 대�
 그리고  $H' \in R^{N_e \times T'}$ 와  $G' \in R^{N_r \times P'}$ 을 output으로 내보냅니다. 
 
 entity $e_i$의 새로운 embedding을 얻으려면 $e_i$가 속한 triple가 학습됩니다. 이러한 embedding을 아래 식에서 볼 수 있듯이 entity의 concatenation과 특정 triple $t_{ij}^k=(e_i,r_k,e_j)$ 의 relation feature vector 사이의 선형변환을 수행하는 것으로 학습합니다. 
-$$
-{\vec{c_{ijk}}} = W_1[\vec{h_i} || \vec{h_j} ||\vec{g_k}]
-$$
+$${\vec{c_{ijk}}} = W_1[\vec{h_i} || \vec{h_j} ||\vec{g_k}]$$
 위의 식에서 $\vec{c_{ijk}}$ 은 triple  $t_{ij}^k$의 벡터형이고 $\vec{h_i}$ , $\vec{h_j}$ ,  $\vec{g_k}$ 은 각각 entity $e_i$, $e_j$와 relation 의 embedding입니다. 그리고 $W_1$은 선형변환 행렬입니다. 
 
 GAT와 유사하게 각 triple  $t_{ij}^k$의 중요도를  $b_{ijk}$ 라고 할 때 아래와 같이 계산한다. 이 때, 가중치 행렬인 $W_2$ 와 LeakyReLU의 계산으로 triple의 중요도를 계산한다. 
-$$
-b_{ijk} = LeakyReLU(W_2c_{ijk})
-$$
+qkRNlajfklja;lsfdsa
+$$b_{ijk} = LeakyReLU(W_2c_{ijk})$$
 아래의 식과 같이 Relative attention value $\alpha_{ijk}$를 얻기 위해 GAT와 유사하게 softmax를  $b_{ijk}$에 적용하여 구합니다. 
 $$
 \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})}
