@@ -72,72 +72,42 @@ Graph Convolutional networks(GCNs) 는 entity의 이웃노드에게서 정보를
 
 먼저, 한 레이어의 노드의 input feature set은  $x= \{\vec{x_1}, \vec{x_2}, \vec{x_3}, ..., \vec{x_N}\}$ 이고 layer를 지나고 나면 $x'= \{\vec{x_1'}, \vec{x_2'}, \vec{x_3'}, ..., \vec{x_N'}\}$ 을 output으로 만듭니다. 이 때 $x$ 와 $x'$ 는 모두 entity $e_i$의 embedding이고 N은 노드 개수입니다. 따라서 하나의 GAT 레이어는 아래의 식으로 설명될 수 있습니다. 
 
-$$e_{ij}= {a( W \vec{x_i},W \vec{x_j})}$$
+$$
+e_{ij}= {a( W \vec{x_i},W \vec{x_j})}
+$$
+
 
 이때 $(e_{ij})$는 edge $(e_i,e_j)$의 attention value를 의미합니다. Attention value는 각 edge의 feature들이 시작 노드인 $e_i$에 대한 중요도입니다. $W$는 input feature를 더 큰 차원을 가진 output feature공간으로 매핑하기 위한 선형변환이고 $a$는 attention function으로 직접 정하는 함수입니다. 여기서 relative attention $\alpha_{ij}$ 는 이웃에 있는 모든 value에 대해 softmax function을 이용하여 계산한 값입니다. 아래는 output embedding을 구하는 과정입니다.
 
-$${\vec{x_i'} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})}$$
+$$
+{\vec{x_i'} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})}
+$$
+
 
 그런데, GAT는 learning precoess를 안정화시키기 위해 multi-head attention을 사용합니다. (자세한 내용은 [여기](https://arxiv.org/abs/1706.03762)를 클릭하세요) multi-head attention process는 $K$개의 attention head를 합치는 것으로 이루어지는데 구체적인 식은 아래와 같습니다. 이 때, $||$ 는 합치는 과정을 의미하고 $\sigma$는 비선형 함수를 의미하고 $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수를 의미하는데 이는 k-th attention mechanism으로 계산됩니다. 그리고 $W^k$는 k-th attention mechanism의 선형 변환 행렬을 의미합니다. 
-$${\vec{(x_i')}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$
+$$
+{\vec{(x_i')}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})
+$$
+
 마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다. 
-$$ \\
+$$
 {\vec{x_i'}} = \sigma({1\over{K}}\sum_{k=1}^K
-{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j}) \\
+{\sum\limits_{j\in\mathbb{N_i}}} \alpha_{ij}^kW^k\vec{x_j}) \alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})}
 $$
 
 
-GAT는 성공적이었지만 KG의 중요한 파트인 relation feature에 대해서는 고려하지 않았기 때문에 KGs에는 적합하지 않았습니다. KG에서는 entity가 어떤 relation과 관계되어지는지에 따라서 다른 역할이 부여되기 때문입니다. 
-
-![그림 2](https://user-images.githubusercontent.com/22410209/93541748-3d776e00-f992-11ea-9bc6-8f4b1034867a.JPG)
 
 
-
-예를 들어, 위의 그림에서 보면 Christopher Nolan은 두개의 서로 다른 triple에 나타나는데 하나의 역할은 brother이고 하나의 역할은 director입니다. 
-
-
-
-### 본 논문이 제안하는 New model
-
-위와 같은 문제를 해결하고자 본 논문에서는 relation과 neighboring node feature를 모두 고려하는 attention mechanism에서의 embedding 접근을 제안합니다. 먼저 하나의 attentional 레이어를 만들고 모델 구축을 시작합니다. GAT와 유사하게 이 framework는 특정 attention mechanism에 더욱 강력합니다. 아래의 그림은 본 모델의 전체 flow를 나타낸 그림입니다.
-
-![Image_4](https://user-images.githubusercontent.com/22410209/93541770-4cf6b700-f992-11ea-8d25-c65d58175007.JPG)
-
-제안하는 모델의 각 layer는 2개의 embedding 행렬을 input으로 가집니다. 
-
-* Entity embeddings $H \in R^{N_e \times T}$ 
-
-  $N_e$ 는 전체 entity 개수, $T$ 는 각 entity embedding의 feature dimension
-
-* relation embeddings $G \in R^{N_r \times P}$  
-
-  $N_r$ 는 전체 relation 개수, $P$ 는 각 relation embedding의 feature dimension
-
-그리고  $H' \in R^{N_e \times T'}$ 와  $G' \in R^{N_r \times P'}$ 을 output으로 내보냅니다. 
-
-entity $e_i$의 새로운 embedding을 얻으려면 $e_i$가 속한 triple가 학습됩니다. 이러한 embedding을 아래 식에서 볼 수 있듯이 entity의 concatenation과 특정 triple $t_{ij}^k=(e_i,r_k,e_j)$ 의 relation feature vector 사이의 선형변환을 수행하는 것으로 학습합니다. 
-$${\vec{c_{ijk}}} = W_1[\vec{h_i} || \vec{h_j} ||\vec{g_k}]$$
-위의 식에서 $\vec{c_{ijk}}$ 은 triple  $t_{ij}^k$의 벡터형이고 $\vec{h_i}$ , $\vec{h_j}$ ,  $\vec{g_k}$ 은 각각 entity $e_i$, $e_j$와 relation 의 embedding입니다. 그리고 $W_1$은 선형변환 행렬입니다. 
-
-GAT와 유사하게 각 triple  $t_{ij}^k$의 중요도를  $b_{ijk}$ 라고 할 때 아래와 같이 계산한다. 이 때, 가중치 행렬인 $W_2$ 와 LeakyReLU의 계산으로 triple의 중요도를 계산한다. 
-qkRNlajfklja;lsfdsa
-$$b_{ijk} = LeakyReLU(W_2c_{ijk})$$
-아래의 식과 같이 Relative attention value $\alpha_{ijk}$를 얻기 위해 GAT와 유사하게 softmax를  $b_{ijk}$에 적용하여 구합니다. 
-$$
-\alpha_{ijk}=softmax_{jk}(b_{ijk}) = \frac{exp(b_{ijk})}{\sum\limits_{n\in N_i}\sum\limits_{r\in R_{in}}exp(b_{inr})}
-$$
 위 식에서 $N_i$는 entity $e_i$의 이웃이고 $R_{ij}$는 $e_i$와 $e_j$를 연결하는 relation의 집합입니다. 
 
-Entity  $e_i$의 새로운 embedding은  attention value에 의해 가중치가 표현된 각 triple의 sum이고 아래와 같이 구할 수 있습니다. 
+Entity  $e_i$의 새로운 embedding은  attention value에 의해 가중치가 표현된 각 triple의 sum이고 아래와 같이 구할 수 있습니다.
 $$
 \vec{h_i'} = \sigma(\sum\limits_{j\in N_i}\sum\limits_{k\in R_{ij}}\alpha_{ijk}\vec{c_{ijk}})
 $$
 본 모델도 GAT에서 언급했던 학습 과정을 안정화시키고 더 많은 이웃에 대한 정보를 포함하기 위해서 사용되는 multi-head attention으로 구현합니다. 본질적으로 $M$개의 서로 독립적인 attention mechanism이 embedding을 계산하고 합쳐질 때 아래와 같은 식으로 연산됩니다. 이 과정이 그림 4에서 graph attention layer라고 표시된 부분입니다. 			
-
 $$
 \vec{h_i'} =\mathbin\Vert_{m=1}^M \sigma(\sum\limits_{j\in N_i}\alpha_{ijk}^m\vec{c_{ijk}^m})
 $$
-
 
 그리고 relation embedding 행렬인 G에 대해서도 선형변환을 가중치있는 행렬 $W^R$을 통해 진행하면 아래의 식과 같이 output relation embedding을 구할 수 있습니다. 이 때 $W^R \in R^{T \times T'}$ 이고 이때의 $T'$은 output relation embedding의 차원입니다. 
 $$
@@ -179,18 +149,17 @@ $$
 
 본 모델은 ConvKB를 decoder로 사용한다. Convolution layer의 목표는 각 dimension에 있는 triple  $t_{ij}^k $ 의 global embedding 속성을 분석하는 것과 모델의 변하는 성질을 일반화하는 것에 있습니다. Score function은 여러개의 feature map으로 아래와 같이 표현될 수 있습니다.
 $$
-f(t_{ij}^k) = (||_{m=1}^\Omega RELU([\vec{h_i},\vec{g_k},\vec{h_j}] * w^m)) \cdot W\\ \ \\
-\Omega: filter 개수 \quad*: convolution\ 연산 \\ W \in R^{\Omega k \times 1}: triple의 \ final score를\ 계산하기\ 위한\ 선형\ 변환
+f(t_{ij}^k) = (||_{m=1}^\Omega RELU([\vec{h_i},\vec{g_k},\vec{h_j}] * w^m)) \cdot W
 $$
+위의 식에서 $\Omega$: filter 개수 , $*$: convolution 연산 $W\in R^{\Omega k \times 1}$ : triple의  final score를 계산하기 위한 선형 변환
+
 이 모델은 soft-margin loss를 사용하여 학습되고 아래와 같습니다.
-
-
 $$
-L = \sum\limits_{t_{ij}^k}\in\{S\cup S'\}}log(1+exp(l_{t_{ij}^k} \cdot f(t_{ij}^k))) + {\lambda \over 2}||W||^2_2
+L = \sum\limits_{{t_{ij}^k}\in\{S\cup S'\}}log(1+exp(l_{t_{ij}^k} \cdot f(t_{ij}^k))) + {\lambda \over 2}||W||^2_2
 \\
 where \quad l_{t_{ij}^k} = \left\{ \begin{array}{ll}
          1 & \mbox{if $t_{ij}^k \in S$};\\
-        -1 & \mbox{if $t_{ij}^k \in S'$}.\end{array} \right. 
+        -1 & \mbox{if $t_{ij}^k \in S'$}.\end{array} \right.
 $$
 
 
