@@ -6,7 +6,6 @@ title:  "Learning Attention-based Embeddings for Relation Prediction in Knowledg
 date:   2020-09-17T16:25:52-23:00
 author: Jeewon Chae
 categories: Paper_review
-
 ---
 
 Deepak Nathani∗ Jatin Chauhan∗ Charu Sharma∗ Manohar Kaul Department of Computer Science and Engineering, IIT Hyderbad {deepakn1019,chauhanjatin100,charusharma1991}@gmail.com, mkaul@iith.ac.in
