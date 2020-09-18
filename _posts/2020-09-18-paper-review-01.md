@@ -13,22 +13,6 @@ Deepak Nathani∗ Jatin Chauhan∗ Charu Sharma∗ Manohar Kaul Department of Co
 해당 블로그 포스트는 ACL 2019 에 게재된 [Learning Attention-based Embeddings for Relation Prediction in Knowledge Graphs](https://www.aclweb.org/anthology/P19-1466/) 논문 정리 및 분석하기 위해 작성되었습니다.
 
 ### Knowledge graphs(KGs)와 relaton prediction이란?
-$$
-\begin{align*}
-  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
-  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
-  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
-      \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
-      \vdots & \ddots & \vdots \\
-      \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
-    \end{array} \right)
-  \left( \begin{array}{c}
-      y_1 \\
-      \vdots \\
-      y_n
-    \end{array} \right)
-\end{align*}
-$$
 
 Knowledge graphs(KGs)는 Knowledge bases(KBs)를 directed graph로 표현한 것을 의미합니다. 이 때 KBs는 AI가 사용될 분야에 대해 축적한 전문 지식 그리고 문제 해결에 필요한 사실과 규칙 등이 저장되어 있는 데이터베이스입니다. 즉, KGs는 아래의 그림과 같이 KBs의 entity를 node로, relation을 edge로 표현한 자료구조입니다. 
 
@@ -89,7 +73,16 @@ Graph Convolutional networks(GCNs) 는 entity의 이웃노드에게서 정보를
 먼저, 한 레이어의 노드의 input feature set은  $x= \{\vec{x_1}, \vec{x_2}, \vec{x_3}, ..., \vec{x_N}\}$ 이고 layer를 지나고 나면 $x'= \{\vec{x_1'}, \vec{x_2'}, \vec{x_3'}, ..., \vec{x_N'}\}$ 을 output으로 만듭니다. 이 때 $x$ 와 $x'$ 는 모두 entity $e_i$의 embedding이고 N은 노드 개수입니다. 따라서 하나의 GAT 레이어는 아래의 식으로 설명될 수 있습니다.
 
 $$
+{e_{ij}= a( W \vec{x_i},W \vec{x_j})}
+$$
+$$
 e_{ij}= a( W \vec{x_i},W \vec{x_j})
+$$
+$$
+{e_{ij}= a( {W\vec{x_i}},{W\vec{x_j}})}
+$$
+$$
+e_{ij}= {a( W \vec{x_i},W \vec{x_j})}
 $$
 
 이때 $(e_{ij})$는 edge $(e_i,e_j)$의 attention value를 의미합니다. Attention value는 각 edge의 feature들이 시작 노드인 $e_i$에 대한 중요도입니다. $W$는 input feature를 더 큰 차원을 가진 output feature공간으로 매핑하기 위한 선형변환이고 $a$는 attention function으로 직접 정하는 함수입니다. 여기서 relative attention $\alpha_{ij}$ 는 이웃에 있는 모든 value에 대해 softmax function을 이용하여 계산한 값입니다. 아래는 output embedding을 구하는 과정입니다.
