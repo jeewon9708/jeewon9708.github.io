@@ -4,8 +4,7 @@ title:  "Learning Attention-based Embeddings for Relation Prediction in Knowledg
 date:   2020-09-17T16:25:52-23:00
 author: Jeewon Chae
 categories: Paper_review
-tags: 연구프로젝트
-use_math:true
+use_math: true
 ---
 
 
