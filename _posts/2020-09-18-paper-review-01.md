@@ -84,7 +84,7 @@ $${\vec{x_i'}} = \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}W\vec{x_j})$$
 또한,  GAT는 learning process를 안정화시키기 위해 multi-head attention을 사용합니다. (자세한 내용은 [여기](https://arxiv.org/abs/1706.03762)를 클릭하세요) multi-head attention process는 $K$개의 attention head를 합치는 것으로 이루어지는데 구체적인 식은 아래와 같습니다.   
 $${\vec{x_i'}} = {\vert\vert}_{k=1}^K \sigma(\sum\limits_{j\in\mathbb{N_i}} \alpha_{ij}^kW\vec{x_j})$$  
 
-$||$ :합치는 과정 (concatenation),  $\sigma$: 비선형 함수,  $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수(k-th attention mechanism으로 계산), $W^k$: k-th attention mechanism의 선형 변환 행렬 
+$\Vert$ :합치는 과정 (concatenation),  $\sigma$: 비선형 함수,  $\alpha_{ij}^k$는 정규화된 edge $(e_i,e_j)$의 계수(k-th attention mechanism으로 계산), $W^k$: k-th attention mechanism의 선형 변환 행렬 
 
 마지막으로, 최종 레이어에서는 output embedding이 평균을 구하는 것으로 계산되기 때문에 아래와 같이 연산됩니다.   
 $$\vec{(x_i')} = \sigma(1/K\sum_{k=1}^K
