@@ -102,7 +102,7 @@ T': candidate set
 
 * 비교 차트
 
-  ![image-20201120093016416](C:\Users\jeewo\AppData\Roaming\Typora\typora-user-images\image-20201120093016416.png)
+  ![image-20201120193936634](C:\Users\jeewo\AppData\Roaming\Typora\typora-user-images\image-20201120193936634.png)
 
   ​				
 
