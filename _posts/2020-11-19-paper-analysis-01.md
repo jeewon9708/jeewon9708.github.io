@@ -19,7 +19,7 @@ use_math: true
 
 먼저 relation prediction은 아래의 그림과 같이 entity(node) 2개가 주어졌을 때 주변 환경, 그래프를 보고 그 관계를 예측하는 일입니다. 
 
-![image-20201120190746832](C:\Users\jeewo\AppData\Roaming\Typora\typora-user-images\image-20201120190746832.png)
+![image-20201120190746832](https://user-images.githubusercontent.com/22410209/99798285-1a289500-2b74-11eb-8e8c-d8b1d2214b85.png)
 
 이 relation prediction을 평가하기 위해서는 (e1,e2,r)이 있을 때 (e1,e2)로부터 r이 될 수 있는 모든 경우 (T')에 대해 score를 매기고 이를 sorting하여 올바른 r을 예측합니다.
 
@@ -27,7 +27,7 @@ use_math: true
 
 먼저 현재 사용되고 있는 방법은 TOP 방법으로 valid한 triplet를 sort할 때 맨 앞으로 두어 같은 score값이 있을 때 언제나 100%의 확률로 valid한 결과로 평가되어왔습니다. 아래의 그림과 같이 같은 score인 c를 가진 여러 경우에도 t가 선택되는 것을 볼 수 있습니다.
 
-![image-20201120191334827](C:\Users\jeewo\AppData\Roaming\Typora\typora-user-images\image-20201120191334827.png)
+![image-20201120191334827](https://user-images.githubusercontent.com/22410209/99798308-257bc080-2b74-11eb-9dfb-d305405cd232.png)
 
 즉, 만약에 점수가 같은 triplet이 여러개 있을 경우 어떠한 triplet을 정할 것인지가 중요한데 위의 몇몇 연구들에서는 이 점을 제대로 짚고 넘어가지 않았습니다. 그래서 KG-ReEvaluation 논문에서는 정답 후보인 T'에서 valid한 triplet을 항상 가장 앞에 있는 triplet에 둘지, 가장 뒤에 둘지 아니면 랜덤으로 고를지에 따라 다른 결과가 나오는 것을 위의 표를 통해 보여주었습니다.
 
