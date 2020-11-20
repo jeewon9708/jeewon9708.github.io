@@ -102,9 +102,9 @@ T': candidate set
 
 * 비교 차트
 
-  ![image-20201120193936634](C:\Users\jeewo\AppData\Roaming\Typora\typora-user-images\image-20201120193936634.png)
+  ![image-20201120193936634](https://user-images.githubusercontent.com/22410209/99791170-99b06700-2b68-11eb-84fa-a49e761202ae.png)
 
-  ​				
+  
 
   *MR: 작을수록 성능이 좋은 것*
 
@@ -136,7 +136,7 @@ T': candidate set
 
 기존 KBAT 코드를 보면 train batch에 validation dataset을 이용하기 때문에 데이터누수가 있다고 여겨 이를 해결한 아래와 같은 코드로 실험을 진행한 것입니다. 
 
-![image-20201120183208867](C:\Users\jeewo\AppData\Roaming\Typora\typora-user-images\image-20201120183208867.png)
+![image-20201120183208867](https://user-images.githubusercontent.com/22410209/99791243-b2b91800-2b68-11eb-8ea9-844d4b2bc7c8.png)
 
 
 
