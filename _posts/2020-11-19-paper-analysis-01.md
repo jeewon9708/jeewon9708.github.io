@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "KBAT paper의 KG-ReEval paper를 통한 분석"
-date:   2020-11-19T16:25:52-23:00
+date:   2020-11-17T16:25:52-23:00
 author: Jeewon Chae
 categories: Paper_review
 use_math: true
@@ -9,7 +9,7 @@ use_math: true
 
 
 
-해당 블로그 포스트는 ACL 2019 에 게재된 [Learning Attention-based Embeddings for Relation Prediction in Knowledge Graphs](https://www.aclweb.org/anthology/P19-1466/) 논문의 심층 분석을 위하여 작성되었습니다. ACL 2020논문 [A Re-evaluation of Knowledge Graph Completion Methods](https://arxiv.org/pdf/1911.03903v3.pdf)을 활용한 분석입니다.  각 논문의 실험 코드는 https://github.com/deepakn97/relationPrediction, https://github.com/svjan5/kg-reeval를 참고하시면 됩니다. 
+해당 블로그 포스트는 ACL 2019 에 게재된 [Learning Attention-based Embeddings for Relation Prediction in Knowledge Graphs](https://www.aclweb.org/anthology/P19-1466/) 논문의 심층 분석을 위하여 작성되었습니다. ACL 2020논문 [A Re-evaluation of Knowledge Graph Completion Methods](https://arxiv.org/pdf/1911.03903v3.pdf)을 활용한 분석입니다.  각 논문의 실험 코드는 [KBAT github](https://github.com/deepakn97/relationPrediction), [KG-ReEval github](https://github.com/svjan5/kg-reeval)를 참고하시면 됩니다. 
 
 ### KG-ReEval 논문
 
