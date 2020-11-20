@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "KBAT paper의 KG-ReEval paper를 통한 분석"
-date:   2020-11-17T16:25:52-23:00
+date:   2020-11-19T16:25:52-23:00
 author: Jeewon Chae
 categories: Paper_review
 use_math: true
